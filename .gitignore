@@ -1,0 +1,8 @@
+__pycache__
+.vscode
+/mrcnn
+/Mask_RCNN
+.idea
+*.jpg
+*.png
+*.h5
