@@ -18,6 +18,7 @@ import glob
 import skimage.draw
 import xmltodict
 import json
+from skimage import io
 # os.chdir('./Mask_RCNN')
 # sys.path.append(os.path.join('./', 'Mask_RCNN'))  # To find local version of the library
 
@@ -27,7 +28,7 @@ import mrcnn.model as modellib
 from mrcnn import visualize
 from mrcnn.model import log
 ROOT_DIR='./project'
-
+UTILS = utils
 class DetectorConfig(Config):    
     NAME = 'banana'
     
@@ -192,7 +193,7 @@ def transform_annotations(image_path):
     return images_list
 
 
-new_model_path = './update_model30.h5'
+new_model_path = './model_256_8_101.h5'
 class InferenceConfig(DetectorConfig):
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
@@ -223,7 +224,7 @@ def get_colors_for_class_ids(class_ids):
 
 
 def load_image(path):
-  image = skimage.io.imread(path)
+  image = io.imread(path)
   # If grayscale. Convert to RGB for consistency.
   if image.ndim != 3:
       image = skimage.color.gray2rgb(image)
@@ -260,13 +261,25 @@ def display_image(image, figsize=(16, 16), ax=None):
 
 # Drag and drop image to detect to google colab
 
+
+graph = tf.compat.v1.get_default_graph()
+
 def predict(picture):
-    path_to_detect='./ezgif.com-gif-maker.jpg'
-    new_image = load_image(path_to_detect)
+    new_image = picture
     # plt.subplot(6, 2, 1)
     # display_image(new_image, ax=fig.axes[-1])
     print('--------------------------------')
-    results = new_model.detect([new_image]) #, verbose=1)
+    results = None
+    with graph.as_default():
+        results = new_model.detect([new_image]) #, verbose=1)
     r = results[0]
     visualize.display_instances(new_image,r['rois'],r['masks'],r['class_ids'],['BG','banana'],r['scores'],colors=get_colors_for_class_ids(r['class_ids']))
     return r
+
+if __name__ == '__main__':
+    if len(sys.argv)<=1:
+        x = load_image('./ezgif.com-gif-maker.jpg')
+    else:
+        x = load_image(sys.argv[1])
+    print(type(x),x.dtype,x.shape)
+    print(predict(load_image('./ezgif.com-gif-maker.jpg')))

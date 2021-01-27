@@ -1,0 +1,18 @@
+<html>
+    <head>
+
+    </head>
+    <body>
+        <form action="/api/upload_image" method="POST" enctype="multipart/form-data" id='request_form'>
+            <input type="file" id='fileIn' name="image" id="image"></input>
+            
+        
+            <img id="outImage"></img>
+        </form>
+        
+        <script src='/static/script/predict.js'></script>
+        <div>
+            <button id="btnSubmit" Onclick='SubmitClick()'>submit</button>
+        </div>
+    </body>
+</html>
